@@ -1,0 +1,9 @@
+syntax: glob
+
+*.bak
+*~
+bbpull.*
+bbpush.*
+desktop.ini
+log/*
+
