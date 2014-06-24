@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-
 #
 # mysql4to5 - converts MySQL4-queries to MySQL5-compatible-queries
 #
@@ -34,32 +33,37 @@ use 5.006;
 use strict;
 use warnings;
 use File::Find qw(finddepth);
+use File::Copy qw(move);
 
 my @files;
 finddepth(sub {
 	return if($_ eq '.' || $_ eq '..');
-	push @files, $File::Find::name if($_ =~ /sql$/);
+	push @files, $File::Find::name if($_ =~ /\.pm$/);
 }, '.');
 
 local $/=undef;
 foreach my $infile (@files) {
-	open (IN, "<$infile") or die "Couldn't open $infile for reading: $!\n";
+	open (IN, "<$infile") or die "Couldn't open '$infile' for reading: $!\n";
 	my ($oldline, $newline);
 	$oldline = $newline = <IN>;
 	close IN;
 
 	# fix SELECT statements
-	$newline =~ s/from\s+([^\(].*?)\s+where\s+/from \($1\) where /ig;
+	$newline =~ s/\s+from\s+([^(\(|\=)].*?)\s+where\s+/ from \($1\) where /ig;
 	# fix UPDATE statements
-	$newline =~ s/update\s+([^\(].*?)\s+set\s+/update \($1\) set /ig;
+	$newline =~ s/\s+update\s+([^(\(|\=)].*?)\s+set\s+/ update \($1\) set /ig;
 
-	# if changed, write out to .new
+	# if changed, backup original file and write out updated file
 	if ($newline ne $oldline) {
-		my $outfile = $infile . ".new";
-		print "$outfile\n";
-		open (OUT, ">$outfile") or die "Can't open $outfile for writing: $!\n";
-		print OUT $newline;
-		close OUT;
+		my $bakfile = $infile . ".pre-mysql4to5";
+		if (move($infile, $bakfile)) {
+			print "$infile\n";
+			open (OUT, ">$infile") or die "Can't open '$infile' for writing: $!\n";
+			print OUT $newline;
+			close OUT;
+		} else {
+			die "Can't move '$infile' to '$bakfile': $!\n";
+		}
 	}
 }
 1;
