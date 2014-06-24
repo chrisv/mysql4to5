@@ -38,7 +38,7 @@ use File::Copy qw(move);
 my @files;
 finddepth(sub {
 	return if($_ eq '.' || $_ eq '..');
-	push @files, $File::Find::name if($_ =~ /\.pm$/);
+	push @files, $File::Find::name if($_ =~ /\.sql$/);
 }, '.');
 
 local $/=undef;
@@ -49,9 +49,10 @@ foreach my $infile (@files) {
 	close IN;
 
 	# fix SELECT statements
-	$newline =~ s/\s+from\s+([^(\(|\=)].*?)\s+where\s+/ from \($1\) where /ig;
+	$newline =~ s/\s+from\s+([^\(].*?)(?!,\s+)where\s+/ from \($1\) where /ig;
+	$newline =~ s/from\s+\=\>\s+'(.*?)',/FROM \=\> '\($1\)',/ig;
 	# fix UPDATE statements
-	$newline =~ s/\s+update\s+([^(\(|\=)].*?)\s+set\s+/ update \($1\) set /ig;
+	$newline =~ s/\s+update\s+([^\(].*?)(?!,\s+)set\s+/ update \($1\) set /ig;
 
 	# if changed, backup original file and write out updated file
 	if ($newline ne $oldline) {
