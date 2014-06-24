@@ -58,3 +58,41 @@ my %queries = (
     },
 );
 
+# the below should be updated...
+	# Axoni/Common3.pm
+    execQuery("update membership set mba_id = 17 where mmp_id = ?", $dbh, $mmp);
+	# Viw/Services/OrlExplorerNEW.pm
+    my $drn_ore = execQuery("select ore.ore_id from drnore, orgleveltype ore
+                             where drnore.drn_id = ? and
+                                   ore.ore_id = drnore.ore_id", $dbh, $drn);
+
+      my $drn_rle = execQuery("select ore.ore_id, rle.rle_id
+                               from drnorerle, orgleveltype ore, orgrole rle
+                               where drnorerle.drn_id = ? and
+                                     ore.ore_id = drnorerle.ore_id and
+                                     rle.rle_id = drnorerle.rle_id and
+                                     rle.rle_status = 1", $dbh, $drn);
+
+  my $rs_rle = execQuery("select mbr.mbr_id, ore.ore_id, orl.orl_id, rle.rle_id,
+                                 tlrle.rle_title, tlorl.orl_name, tlore.ore_name
+                          from member mbr, orgrole rle, tlrle, orglevel orl, tlorl,
+                               orgleveltype ore, tlore
+                          where mbr.acr_id = ? and
+                                mbr.mbr_status = 1 and
+                                rle.rle_id = mbr.rle_id and
+                                rle.rle_status = 1 and
+                                rle.rle_hidden != 'y' and
+                                rle.rle_type = ? and
+                                tlrle.rle_id = rle.rle_id and
+                                tlrle.lng_id = ? and
+                                orl.orl_id = mbr.orl_id and
+                                orl.orl_status = 1 and
+                                tlorl.orl_id = orl.orl_id and
+                                tlorl.lng_id = ? and
+                                ore.ore_id = orl.ore_id and
+                                tlore.ore_id = ore.ore_id and
+                                tlore.lng_id = ?
+                          order by tlore.ore_name, tlorl.orl_name, tlrle.rle_title",
+                          $dbh, $acr, $type, $p->{LNG}, $p->{LNG}, $p->{LNG});
+
+

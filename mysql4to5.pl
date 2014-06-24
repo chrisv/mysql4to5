@@ -49,10 +49,10 @@ foreach my $infile (@files) {
 	close IN;
 
 	# fix SELECT statements
-	$newline =~ s/\s+from\s+([^\(].*?)(?!,\s+)where\s+/ from \($1\) where /ig;
+	$newline =~ s/from\s+((?!\()[A-Za-z.'].*?)\s+where/from \($1\) where/sig;
 	$newline =~ s/from\s+\=\>\s+'(.*?)',/FROM \=\> '\($1\)',/ig;
 	# fix UPDATE statements
-	$newline =~ s/\s+update\s+([^\(].*?)(?!,\s+)set\s+/ update \($1\) set /ig;
+	$newline =~ s/update\s+((?!\()[A-Za-z.'].*?)\s+set/update \($1\) set/sig;
 
 	# if changed, backup original file and write out updated file
 	if ($newline ne $oldline) {
