@@ -110,3 +110,31 @@ my %queries = (
                                           iremba.ire_id = ire.ire_id AND
                                           ire.ire_status = 1
                                           $where", $dbh, $mba);
+              #                           ( curdate() BETWEEN ire.ire_from AND ire.ire_to )", $dbh, $mba);
+
+        
+        warn "begin query: $date_from and $mgz_to";
+        
+        #Axoni::Common3::loggedQuery( $dbh, $p, $logId, 40, $acr, $orl,
+        #                            { ID     => 'abt_id',
+        #                              ACTION => 'INSERT',
+        #                              TABLE  => 'abonnement',
+        #                              SET    => { acr_id          => $acr,
+        #                                          mgz_id          => $_->[0],
+        #                                          abe_id          => $_->[1],
+        #                                          abt_from        => "$date_from", 
+        #                                          abt_to          => "$mgz_to",
+        #                                          abt_whenupdated => time,
+        #                                          abt_number      => $_->[2],
+        #                                          abs_id          => $abs
+        #                                        },
+        #                              FUNC   => [ qw/abt_to/ ],
+        #                            }
+        #                          );
+        warn "end query";
+
+      } else {
+        
+        $abt = $mgz_check if $mgz_check > 0;
+        my $abe = getId($dbh, "select abe_id from abonnement where abt_id = $abt");
+
