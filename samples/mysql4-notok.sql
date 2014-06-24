@@ -95,4 +95,18 @@ my %queries = (
                           order by tlore.ore_name, tlorl.orl_name, tlrle.rle_title",
                           $dbh, $acr, $type, $p->{LNG}, $p->{LNG}, $p->{LNG});
 
+  # Axoni/Common2.pm
+    if ($mmp) {
+      $from .= ", membership mmp";
+      $where .= "and mmp.mmp_id = $mmp\n" .
+                "and mmp.mba_id = iremba.mba_id\n" .
+                "and ire.ire_from <= from_unixtime(mmp.mmt_whenset)\n" .
+                "and ire.ire_to > from_unixtime(mmp.mmt_whenset)\n";
+    }
 
+    my $rs_ire = execQueryArrayref("SELECT ire.ire_id FROM iremba, insurance ire $from
+                                    WHERE iremba.mba_id = ? AND 
+                                          iremba.ire_status = 1 AND
+                                          iremba.ire_id = ire.ire_id AND
+                                          ire.ire_status = 1
+                                          $where", $dbh, $mba);

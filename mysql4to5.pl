@@ -49,7 +49,7 @@ foreach my $infile (@files) {
 	close IN;
 
 	# fix SELECT statements
-	$newline =~ s/from\s+((?!\()[A-Za-z.'].*?)\s+where/from \($1\) where/sig;
+	$newline =~ s/[^\$]from\s+((?!\()[A-Za-z.'].*?)\s+where/from \($1\) where/sig;
 	$newline =~ s/from\s+\=\>\s+'(.*?)',/FROM \=\> '\($1\)',/ig;
 	# fix UPDATE statements
 	$newline =~ s/update\s+((?!\()[A-Za-z.'].*?)\s+set/update \($1\) set/sig;
