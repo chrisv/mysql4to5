@@ -60,6 +60,10 @@ After:
 
 Chris Vertonghen <chrisv(at)cpan(dot)org>
 
+# DISCLAIMER
+
+This is quick and dirty code used only by the author for a singular transformation of legacy code. Please review before applying to your own queries. Use at your own risk.
+
 # COPYRIGHT AND LICENSE
 
 Copyright (C) 2014 Chris Vertonghen
